@@ -59,6 +59,17 @@ In case of a mismatch, `snapshot_tests_failures` folder will be created with `Ac
 - `threshold` - sets the threshold for the comparison of the screenshots:`0` to `1`. Default is `0.1`
 - `name` - `.png` extensions only. Default is `test_name[browser][os].png` (recommended)
 - `fail_fast` - If `True`, will fail after first different pixel. `False` by default
+
+## Change snapshots path
+
+You can change the default path where snapshots are stored by setting `pytest.snapshots_path` and/or 
+`pytest.snapshot_failures_path` value in `pytest_configure()` hook in your root `conftest.py`:  
+```python
+def pytest_configure():
+    pytest.snapshots_path = Path.cwd() / "snapshots"
+    pytest.snapshot_failures_path = Path.cwd() / "snapshot_failures"
+```
+
 ## License
 
 Apache 2.0 LICENSE
