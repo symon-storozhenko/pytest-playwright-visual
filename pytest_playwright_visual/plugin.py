@@ -15,7 +15,7 @@ def assert_snapshot(pytestconfig: Any, request: Any, browser_name: str) -> Calla
     test_dir = str(Path(request.node.name)).split('[', 1)[0]
 
     snapshots_path = pytest.snapshots_path if hasattr(pytest, "snapshots_path") else None
-    snapshot_failures_path = pytest.snapshots_path if hasattr(pytest, "snapshot_failures_path") else None
+    snapshot_failures_path = pytest.snapshot_failures_path if hasattr(pytest, "snapshot_failures_path") else None
 
     def compare(img: bytes, *, threshold: float = 0.1, name=f'{test_name}.png', fail_fast=False) -> None:
         update_snapshot = pytestconfig.getoption("--update-snapshots")
