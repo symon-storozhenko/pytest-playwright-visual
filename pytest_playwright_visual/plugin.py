@@ -3,7 +3,7 @@ import os
 import shutil
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 import pytest
 from PIL import Image
 from pixelmatch.contrib.PIL import pixelmatch
@@ -14,10 +14,13 @@ def assert_snapshot(pytestconfig: Any, request: Any, browser_name: str) -> Calla
     test_name = f"{str(Path(request.node.name))}[{str(sys.platform)}]"
     test_dir = str(Path(request.node.name)).split('[', 1)[0]
 
+    snapshots_path = pytest.snapshots_path if hasattr(pytest, "snapshots_path") else None
+    snapshot_failures_path = pytest.snapshots_path if hasattr(pytest, "snapshot_failures_path") else None
+
     def compare(img: bytes, *, threshold: float = 0.1, name=f'{test_name}.png', fail_fast=False) -> None:
         update_snapshot = pytestconfig.getoption("--update-snapshots")
         test_file_name = str(os.path.basename(Path(request.node.fspath))).strip('.py')
-        filepath = (
+        filepath = snapshots_path or (
                 Path(request.node.fspath).parent.resolve()
                 / 'snapshots'
                 / test_file_name
@@ -26,8 +29,9 @@ def assert_snapshot(pytestconfig: Any, request: Any, browser_name: str) -> Calla
         filepath.mkdir(parents=True, exist_ok=True)
         file = filepath / name
         # Create a dir where all snapshot test failures will go
-        results_dir_name = (Path(request.node.fspath).parent.resolve()
-                            / "snapshot_tests_failures")
+        results_dir_name = snapshot_failures_path or (
+            Path(request.node.fspath).parent.resolve() / "snapshot_tests_failures"
+        )
         test_results_dir = (results_dir_name
                             / test_file_name / test_name)
         # Remove a single test's past run dir with actual, diff and expected images
