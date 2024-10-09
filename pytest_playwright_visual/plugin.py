@@ -16,7 +16,7 @@ def assert_snapshot(pytestconfig: Any, request: Any, browser_name: str) -> Calla
 
     def compare(img: bytes, *, threshold: float = 0.1, name=f'{test_name}.png', fail_fast=False) -> None:
         update_snapshot = pytestconfig.getoption("--update-snapshots")
-        test_file_name = str(os.path.basename(Path(request.node.fspath))).strip('.py')
+        test_file_name = Path(request.node.fspath).stem
         filepath = (
                 Path(request.node.fspath).parent.resolve()
                 / 'snapshots'
